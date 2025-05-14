@@ -6,7 +6,7 @@ G3D-ViT is a **3D GradCAM implementation for Vision Transformers (ViTs)**, desig
 
 ## Origin
 
-This project originated during the development of **fMRI2Vec**. After implementing a 3D Vision Transformer to encode fMRI timepoints and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
+This project originated during the development of **[fMRI2Vec](https://github.com/gillet-thomas/fMRI2vec)**. After implementing a 3D Vision Transformer to encode fMRI timepoints (volumes) and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
 
 ## State of the Art - Class Activation Maps
 
@@ -59,7 +59,9 @@ After generating a reliable ground truth class activation map using a 3D ResNet 
 None of the tested methods for 3D ViT enabled the reproduction of the ground truth activation map generetad on the 3D ResNet, motivating the development of a custom solution.
 
 \*_methods tested on a trained 3D ViT achieving 100% accuracy on training and 90%+ on validation for age and gender classification)_
-  
+
+---
+
 ## G3D-ViT Implementation Details
 G3D-ViT works on a trained 3D ViT for classification. It registers **hooks** to capture **activations** during the forward pass of the model and **gradients** during the backward pass.
 
@@ -119,12 +121,17 @@ The input data consists of **fMRI timepoints (volumes)** which are **reshaped in
 ---
 
 ## Validation: Mock Dataset Experiment
-To evaluate the accuracy of the implemented 3D GradCAM solution, a mock dataset was created. This dataset consists of a 3D cube of arbitrary size containing a smaller "target cube" embedded within it. The objective was to train the 3D Vision Transformer for classification on this synthetic dataset until it reached 100% accuracy on both the training and validation sets. Once the model was fully trained, its weights were used to test the GradCAM implementation where the output was therefore expected to precisely and exclusively activate over the target cube.
+To evaluate the accuracy of the implemented 3D GradCAM solution, a mock dataset was created. This dataset consists of a 3D cube of arbitrary size containing a smaller "target cube" embedded within it. The objective was to train the 3D Vision Transformer for classification on this synthetic dataset until it reached 100% accuracy on the training set and 95%+ on the validation set. Once the model was fully trained, its weights were used to test the GradCAM implementation where the output was therefore expected to precisely and exclusively activate over the target cube. _The 3D ViT was trained for 40 epochs, with a batch size of 16, a learning rate of 1e-4, and 0 dropout._
+
+The target cube was positioned at multiples of its size within the grid. For instance, a cube with a size of 8 could only have x, y, and z coordinates that are multiples of 8 (e.g., 0, 8, 16, ...). Additional tests were performed with the target cubes placed at random positions. While the 3D ViT took longer to train for the classification of these random positions due to the increased number of possibilities, the GradCAM results remained consistent.
 
 Two classification tasks were designed to assess how well the GradCAM could localize meaningful regions. In the first task, the model was trained to classify the **position** of the target cube within the larger volume. The larger cube was filled with zeros, while the target cube is filled with ones. Each class (label) corresponded to a specific spatial location of the target cube, effectively encoding positional information. In the second task, the content of the target cube was set to either -1 or 1, and the classification label was 0 or 1 accordingly. This second task removed any spatial context, focusing purely on **content**. The goal of these experiments was to verify that the GradCAM correctly highlighted the target cube in both position-sensitive and content-only scenarios.
 
+![Mock Dataset Example](results/mockdataset_sample.png)
+*Mockdataset sample with grid size of 40, target cube of size 8, noise 0. Target cube has label 26 on the (40/8)^3 possibilities.*
 
-### Experiment Flow (summary)
+
+### Mock Dataset Experiment steps (summary)
 1. Train a 3D ViT on this mock dataset.
 2. Achieve 100% accuracy on both training and validation.
 3. Run G3D-ViT to verify that the attention maps highlight the correct regions.
@@ -134,11 +141,21 @@ Two classification tasks were designed to assess how well the GradCAM could loca
 
 ### Results and Observations
 
-The 3D ViT successfully achieved 100% classification accuracy on the mock dataset. Interestingly, a smaller ViT configuration tended to yield better interpretability results probably because of the shorter gradient path facilitating stronger signal flow. However, for consistency and fidelity with prior work, the default configuration from lucidrains' 3D ViT was retained: an embedding dimension of 1024, MLP dimension of 2048, 8 attention heads, and 6 transformer blocks.
+The 3D ViT successfully achieved 100% classification accuracy (99% on validation dataset) on the mock dataset. Interestingly, a smaller ViT configuration tended to yield better interpretability results probably because of the shorter gradient path facilitating stronger signal flow. However, for consistency and fidelity with prior work, the default configuration from lucidrains' 3D ViT was retained: an embedding dimension of 1024, MLP dimension of 2048, 8 attention heads, and 6 transformer blocks.
 
-For both classification tasks, it was observed that setting the ViT patch size equal to the target cube size consistently failed. A likely reason is that Vision Transformers perform best when patches contain complex textures, edges, or varying patterns—features that help the model learn meaningful embeddings. When the patch size matches the target cube, patches become overly homogeneous (e.g., all background or all target), making it difficult for the model to distinguish between them. In contrast, when patch sizes are larger than the target or misaligned with it (i.e., the patch partially overlaps the target boundary), the resulting input has richer, more informative spatial variation—leading to more reliable learning and attention localization.
+For both classification tasks, it was observed that setting the ViT patch size equal to (or a divisor of) the target cube size consistently failed. A likely reason is that Vision Transformers perform best when patches contain complex textures, edges, or varying patterns—features that help the model learn meaningful embeddings. When the patch size matches the target cube, patches become overly homogeneous (e.g., all background or all target), making it difficult for the model to distinguish between them. In contrast, when patch sizes are larger than the target or misaligned with it (i.e., the patch partially overlaps the target boundary), the resulting input has richer, more informative spatial variation—leading to more reliable learning and attention localization.
+
+Another finding was that GradCAM performs better when the patches are smaller than the target cube. This makes sense, as having a patch larger than the regions being captured leads to less precise localization, making it harder for the model to focus on the specific areas of interest.
 
 Multiple dataset configurations were created, varying the overall cube size (grid size), the size of the target cube, and the ViT patch size. Additionally, a noise parameter was introduced to change the background values (everywhere except in the target cube), allowing to analyse how the attention responds in more heterogeneous or noisy environments.
+
+![Mock Dataset Example](results/DatasetGradCAM_40grid_8cube_5patch_0noise.png) ![Mock Dataset Example](results/DatasetGradCAM_40grid_8cube_10patch_0noise.png)
+*Comparison of GradCAM outputs for patch sizes 5 (left) and 10 (right), using the same grid and cube size without noise.*
+
+<p align="center">
+  <img src="results/DatasetGradCAM_40grid_8cube_5patch_0noise.png" width="45%" alt="GradCAM - 5 Patch Size"/>
+  <img src="results/DatasetGradCAM_40grid_8cube_10patch_0noise.png" width="45%" alt="GradCAM - 10 Patch Size"/>
+</p>
 
 ---
 
