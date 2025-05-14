@@ -116,24 +116,32 @@ The input data consists of **fMRI timepoints (volumes)** which are **reshaped in
 - **Neuroscience**: Identifying **regions of interest (ROIs)** in brain scans.
 - **Model interpretability**: Gaining insights into how ViTs process **spatial patterns in 3D data**.
 
+---
+
 ## Validation: Mock Dataset Experiment
-To verify G3D-ViT's accuracy, a mock dataset was created:
+To evaluate the accuracy of the implemented 3D GradCAM solution, a mock dataset was created. This dataset consists of a 3D cube of arbitrary size containing a smaller "target cube" embedded within it. The objective was to train the 3D Vision Transformer for classification on this synthetic dataset until it reached 100% accuracy on both the training and validation sets. Once the model was fully trained, its weights were used to test the GradCAM implementation where the output was therefore expected to precisely and exclusively activate over the target cube.
 
-### Dataset Description
-- A large 3D cube filled with zeros.
-- A smaller target cube filled with ones embedded inside.
-- Two classification tasks:
-   1. Positional Classification: Assigns a class based on the target cube’s location.
-   2. Binary Content Classification: Target cube is filled with -1 or 1, label is 0 or 1 accordingly.
+Two classification tasks were designed to assess how well the GradCAM could localize meaningful regions. In the first task, the model was trained to classify the **position** of the target cube within the larger volume. The larger cube was filled with zeros, while the target cube is filled with ones. Each class (label) corresponded to a specific spatial location of the target cube, effectively encoding positional information. In the second task, the content of the target cube was set to either -1 or 1, and the classification label was 0 or 1 accordingly. This second task removed any spatial context, focusing purely on **content**. The goal of these experiments was to verify that the GradCAM correctly highlighted the target cube in both position-sensitive and content-only scenarios.
 
-### Experiment Flow
+
+### Experiment Flow (summary)
 1. Train a 3D ViT on this mock dataset.
 2. Achieve 100% accuracy on both training and validation.
 3. Run G3D-ViT to verify that the attention maps highlight the correct regions.
 4. Evaluate interpretability on both:
    - Position-based classification (tests spatial sensitivity).
    - Value-based classification (tests non-spatial sensitivity).
-  
+
+### Results and Observations
+
+The 3D ViT successfully achieved 100% classification accuracy on the mock dataset. Interestingly, a smaller ViT configuration tended to yield better interpretability results probably because of the shorter gradient path facilitating stronger signal flow. However, for consistency and fidelity with prior work, the default configuration from lucidrains' 3D ViT was retained: an embedding dimension of 1024, MLP dimension of 2048, 8 attention heads, and 6 transformer blocks.
+
+For both classification tasks, it was observed that setting the ViT patch size equal to the target cube size consistently failed. A likely reason is that Vision Transformers perform best when patches contain complex textures, edges, or varying patterns—features that help the model learn meaningful embeddings. When the patch size matches the target cube, patches become overly homogeneous (e.g., all background or all target), making it difficult for the model to distinguish between them. In contrast, when patch sizes are larger than the target or misaligned with it (i.e., the patch partially overlaps the target boundary), the resulting input has richer, more informative spatial variation—leading to more reliable learning and attention localization.
+
+Multiple dataset configurations were created, varying the overall cube size (grid size), the size of the target cube, and the ViT patch size. Additionally, a noise parameter was introduced to change the background values (everywhere except in the target cube), allowing to analyse how the attention responds in more heterogeneous or noisy environments.
+
+---
+
 ### Summary
 G3D-ViT extends traditional GradCAM to 3D data and is tailored for Vision Transformers applied to fMRI. It addresses the shortcomings of existing tools by offering:
 - 3D-aware interpretability.
