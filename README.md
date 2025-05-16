@@ -214,13 +214,18 @@ _Side-by-side comparison of GradCAM results for value-based classification using
 
 ---
 
-### Summary
-G3D-ViT extends traditional GradCAM to 3D data and is tailored for Vision Transformers applied to fMRI. It addresses the shortcomings of existing tools by offering:
-- 3D-aware interpretability.
-- Support for ViT-specific architecture.
-- Verified reliability via a controlled mock dataset.
+## Conclusion
+G3D-ViT successfully extends traditional GradCAM to 3D data and Vision Transformers. It bridges the gap left by existing tools that either lack 3D support or are incompatible with ViT architectures.
 
----
+The method was validated on a controlled mock dataset, demonstrating robust and consistent attention localization under various configurations. The best results were obtained using:
+- Mean Average Pooling for gradient weighting
+- Thresholding set to 5% of the top gradients
+- Both aligned and not_aligned positioned target cubes
+- Patch sizes smaller than the region of interest
 
-This implementation allows for an intuitive visualization of feature importance in 3D, making Vision Transformers more interpretable for fMRI and medical imaging applications.
+These findings confirm that G3D-ViT provides meaningful and interpretable visualizations even in complex 3D scenarios.
+
+### Limitations
+While promising on synthetic data, further evaluation is required on real fMRI datasets to fully assess performance and generalizability in clinical or research settings.
+
 
