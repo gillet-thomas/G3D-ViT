@@ -35,8 +35,8 @@ Here are all the CNN interpretability methods* that were evaluated:
 
 After generating a reliable ground truth class activation map using a 3D ResNet model, I evaluated several interpretability methods tailored for Vision Transformers. The goal was to assess how well these methods could replicate the attention patterns from the 3D ResNet model. Here is a summary of the tested ViT explainability methods* and their results:  
 
-- **GradCAM**  
-  → *Best-performing and most practical option for ViTs.*
+- **GradCAM** [GitHub](https://jacobgil.github.io/pytorch-gradcam-book/vision_transformers.html)
+  - Designed for 2D data by default, and could not adapt it succesfully for 3D.
 
 - **Beyond Attention** [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Chefer_Transformer_Interpretability_Beyond_Attention_Visualization_CVPR_2021_paper.pdf) [GitHub](https://github.com/hila-chefer/Transformer-Explainability/tree/main)  
   - Requires using a custom ViT-LRP model provided by the authors.  
