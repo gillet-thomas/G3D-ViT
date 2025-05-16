@@ -211,6 +211,17 @@ In the second classification task (value-based), the GradCAM also performed stro
 
 _Side-by-side comparison of GradCAM results for value-based classification using aligned cubes. Left: patch size 5, target cube size 7, grid size 35. Right: patch size 5, target cube size 8, grid size 40. No background noise was added in either case._
 
+## Results on real-world data 
+<table align="center" style="border-collapse: collapse;">
+  <tr>
+    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+      <img src="results/fMRI_G3D-ViT_1.png" width="" alt="GradCAM - 7 cube 5 patch classification task 2"/>
+    </td>
+    <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
+      <img src="results/fMRI_G3D-ViT_2.png" width="" alt="GradCAM - 8 cube 5 patch classification task 2"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
