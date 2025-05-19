@@ -218,10 +218,10 @@ The ViT achieved 100% training accuracy, confirming its ability to separate the 
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_slice45.png" width="" alt="rsfMRI G3DViT - slice 45"/>
+      <img src="results/fMRI_G3D-ViT_slice45.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_slice50.png" width="" alt="rsfMRI G3DViT - slice 45"/>
+      <img src="results/fMRI_G3D-ViT_slice50.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
   </tr>
 </table>
