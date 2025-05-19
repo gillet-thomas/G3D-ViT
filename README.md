@@ -213,7 +213,7 @@ _Side-by-side comparison of GradCAM results for value-based classification using
 ## Results on real-world data 
 After validation on the mock dataset, G3D-ViT was applied to **real-world fMRI data** (specifically resting-state fMRI samples). The classifier used was the same 3D Vision Transformer trained to perform age group classification (young vs. old participants).
 
-The ViT achieved 100% training accuracy, confirming its ability to separate the two age groups based on the input volumes. G3D-ViT was then used to generate attention maps, with the goal of identifying which brain regions the model relied on for this classification. These attention visualizations offer insights into model behavior and may help interpret age-related brain changes in resting-state fMRI.
+The ViT achieved 100% training accuracy, confirming its ability to separate the two age groups based on the input volumes. G3D-ViT was then used to generate attention maps, with the goal of identifying which brain regions the model relied on for this classification. These GradCAM visualizations provide valuable insight into the model's decision-making process and enhance the interpretability of its predictions.
 
 <table align="center" style="border-collapse: collapse;">
   <tr>
@@ -226,20 +226,21 @@ The ViT achieved 100% training accuracy, confirming its ability to separate the 
   </tr>
 </table>
 
+_G3D-ViT applied to 13 resting-state fMRI samples. The left image shows GradCAM results on the middle axial slice (slice 45), while the right image shows results from a slightly higher axial slice (slice 50)._
+
 ---
 
 ## Conclusion
 G3D-ViT successfully extends traditional GradCAM to 3D data and Vision Transformers. It bridges the gap left by existing tools that either lack 3D support or are incompatible with ViT architectures.
 
-The method was validated on a controlled mock dataset, demonstrating robust and consistent attention localization under various configurations. The best results were obtained using:
+The method was validated on a mock dataset, demonstrating robust and consistent attention localization under various configurations. The best results were obtained using:
 - Mean Average Pooling for gradient weighting
 - Thresholding set to 5% of the top gradients
 - Both aligned and not_aligned positioned target cubes
 - Patch sizes smaller than the region of interest
 
-These findings confirm that G3D-ViT provides meaningful and interpretable visualizations even in complex 3D scenarios.
+These findings confirm that G3D-ViT provides meaningful and interpretable visualizations in 3D scenarios.
 
 ### Limitations
-While promising on synthetic data, further evaluation is required on real fMRI datasets to fully assess performance and generalizability in clinical or research settings.
-
+G3D-ViT has shown promising results on synthetic data as well as on the resting-state fMRI samples tested so far. However, **further evaluation** on a broader variety of fMRI, rsfMRI, and MRI datasets is **necessary** to ensure the 3D GradCAM performs reliably across diverse and complex real-world scenarios. 
 
