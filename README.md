@@ -121,13 +121,13 @@ The input data consists of **fMRI timepoints (volumes)** which are **reshaped in
 ## Validation: Mock Dataset Experiment
 To evaluate the accuracy of the implemented 3D GradCAM solution, a **mock dataset was created**. This dataset consists of a 3D cube of arbitrary size containing a smaller "target cube" embedded within it. The objective was to train the 3D Vision Transformer for classification on this synthetic dataset until it reached 100% accuracy on the training set and 90%+ on the validation set. Once the model was fully trained, its weights were used to test the GradCAM implementation where the output was therefore expected to precisely and exclusively activate over the target cube. _The 3D ViT was trained for 20 epochs, with a batch size of 16, a learning rate of 1e-4, 0 dropout, and no weight decay._
 
-The target cube was positioned at multiples of its size within the grid (**_aligned_**). For instance, a cube with a size of 8 could only have x, y, and z coordinates that are multiples of 8 (e.g., 0, 8, 16, ...). Additional tests were performed with the target cubes placed at random positions (**_not_aligned_**). While the 3D ViT took longer to train for the classification of these random positions due to the increased number of possibilities, the GradCAM results remained consistent (see differences in `results/aligned` and `results/not_aligned` folders).
+The target cube was positioned at multiples of its size within the grid (**_aligned_**). For instance, a cube with a size of 8 could only have x, y, and z coordinates that are multiples of 8 (e.g., 0, 8, 16, ...). Additional tests were performed with the target cubes placed at random positions (**_not_aligned_**). While the 3D ViT took longer to train for the classification of these random positions due to the increased number of possibilities, the GradCAM results remained consistent (see differences in `showcase/aligned` and `showcase/not_aligned` folders).
 
 Two classification tasks were designed to assess how well the GradCAM could localize meaningful regions:
 - In the first task, the model was trained to classify the **position** of the target cube within the larger volume. The larger cube was filled with zeros, while the target cube is filled with ones. Each class (label) corresponded to a specific spatial location of the target cube, effectively encoding positional information.
 - In the second task, the content of the target cube was set to either -1 or 1, and the classification label was 0 or 1 accordingly. This second task removed any spatial context, focusing purely on **content**. The goal of these experiments was to verify that the GradCAM correctly highlighted the target cube in both position-sensitive and content-only scenarios.
 
-![Mock Dataset Example](results/aligned/dataset_samples/DatasetGradCAM_40grid_8cube_sample_0noise_2.png)
+![Mock Dataset Example](showcase/aligned/dataset_samples/DatasetGradCAM_40grid_8cube_sample_0noise_2.png)
 *Mockdataset sample with grid size of 40, target cube of size 8, noise 0. Target cube is aligned and has label 101 on the (40/8)^3 possibilities.*
 
 
@@ -146,10 +146,10 @@ The 3D ViT successfully achieved 100% classification accuracy (90%+ on validatio
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/attention3D_40grid_8cube_0noise_1.png" width="" alt="3D Attention"/>
+      <img src="showcase/attention3D_40grid_8cube_0noise_1.png" width="" alt="3D Attention"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/attention3D_40grid_8cube_0noise_2.png" width="" alt="3D Attention"/>
+      <img src="showcase/attention3D_40grid_8cube_0noise_2.png" width="" alt="3D Attention"/>
     </td>
   </tr>
 </table>
@@ -160,7 +160,7 @@ Multiple dataset configurations were created, varying the overall cube size (**g
 
 For both classification tasks (in the aligned cube setup), it was observed that setting the ViT patch size equal to (or a divisor of) the target cube size consistently failed. A likely reason is that Vision Transformers perform best when patches contain complex textures, edges, or varying patterns—features that help the model learn meaningful embeddings. When the patch size matches the target cube, patches become overly homogeneous (e.g., all background or all target), making it difficult for the model to distinguish between them. In contrast, when patch sizes are larger than the target or misaligned with it (i.e., the patch partially overlaps the target boundary), the resulting input has richer, more meaningful spatial variations leading to more a reliable localization of the attention.
 
-![Mock Dataset Example](results/not_aligned/DatasetGradCAM_40grid_5cube_5patch_0noise.png)
+![Mock Dataset Example](showcase/not_aligned/DatasetGradCAM_40grid_5cube_5patch_0noise.png)
 *GradCAM results with a grid size of 40, 0 noise, and a patch size equal to the target cube size (8). The cubes are not aligned in this setup.*
 
 Tests were also conducted by changing the **value of the target cube** from 1 to other values, and no difference was observed in the results of the gradcam.
@@ -170,10 +170,10 @@ Another finding was that GradCAM performs better when the **patches are smaller*
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_40grid_8cube_5patch_0noise.png" width="" alt="GradCAM - 5 cube 8 patch"/>
+      <img src="showcase/aligned/DatasetGradCAM_40grid_8cube_5patch_0noise.png" width="" alt="GradCAM - 5 cube 8 patch"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_40grid_5cube_8patch_0noise.png" width="" alt="GradCAM - 8 cube 5 patch"/>
+      <img src="showcase/aligned/DatasetGradCAM_40grid_5cube_8patch_0noise.png" width="" alt="GradCAM - 8 cube 5 patch"/>
     </td>
   </tr>
 </table>
@@ -185,10 +185,10 @@ The addition of **background noise** did not affect the results, as the GradCAM 
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_42grid_7cube_6patch_0p5noise.png" width="" alt="GradCAM - 0.5 noise"/>
+      <img src="showcase/aligned/DatasetGradCAM_42grid_7cube_6patch_0p5noise.png" width="" alt="GradCAM - 0.5 noise"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_42grid_7cube_6patch_2noise.png" width="" alt="GradCAM - 2 noise"/>
+      <img src="showcase/aligned/DatasetGradCAM_42grid_7cube_6patch_2noise.png" width="" alt="GradCAM - 2 noise"/>
     </td>
   </tr>
 </table>
@@ -200,10 +200,10 @@ In the **second classification task (value-based)**, the GradCAM also performed 
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_35grid_7cube_5patch_0noise_cls2.png" width="" alt="GradCAM - 7 cube 5 patch classification task 2"/>
+      <img src="showcase/aligned/DatasetGradCAM_35grid_7cube_5patch_0noise_cls2.png" width="" alt="GradCAM - 7 cube 5 patch classification task 2"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/aligned/DatasetGradCAM_40grid_8cube_5patch_0noise_cls2.png" width="" alt="GradCAM - 8 cube 5 patch classification task 2"/>
+      <img src="showcase/aligned/DatasetGradCAM_40grid_8cube_5patch_0noise_cls2.png" width="" alt="GradCAM - 8 cube 5 patch classification task 2"/>
     </td>
   </tr>
 </table>
@@ -218,10 +218,10 @@ The ViT achieved 100% training accuracy, confirming its ability to separate the 
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_slice45.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
+      <img src="showcase/fMRI_G3D-ViT_slice45.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_slice50.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
+      <img src="showcase/fMRI_G3D-ViT_slice50.svg" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
   </tr>
 </table>
