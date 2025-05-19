@@ -211,17 +211,17 @@ In the **second classification task (value-based)**, the GradCAM also performed 
 _Side-by-side comparison of GradCAM results for value-based classification using aligned cubes. Left: patch size 5, target cube size 7, grid size 35. Right: patch size 5, target cube size 8, grid size 40. No background noise was added in either case._
 
 ## Results on real-world data 
-After validation on the mock dataset, G3D-ViT was applied to **real-world fMRI data** (specifically resting-state fMRI samples). The classifier used was the same 3D Vision Transformer trained to perform age group classification (young vs. old participants).
+After validation on the mock dataset, G3D-ViT was applied to **real-world fMRI data** (specifically resting-state fMRI samples). The classifier used was the same 3D Vision Transformer trained to perform age group classification (young vs old participants).
 
 The ViT achieved 100% training accuracy, confirming its ability to separate the two age groups based on the input volumes. G3D-ViT was then used to generate attention maps, with the goal of identifying which brain regions the model relied on for this classification. These GradCAM visualizations provide valuable insight into the model's decision-making process and enhance the interpretability of its predictions.
 
 <table align="center" style="border-collapse: collapse;">
   <tr>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_1.png" width="" alt="GradCAM - 7 cube 5 patch classification task 2"/>
+      <img src="results/fMRI_G3D-ViT_slice45.png" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
     <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
-      <img src="results/fMRI_G3D-ViT_2.png" width="" alt="GradCAM - 8 cube 5 patch classification task 2"/>
+      <img src="results/fMRI_G3D-ViT_slice50.png" width="" alt="rsfMRI G3DViT - slice 45"/>
     </td>
   </tr>
 </table>
