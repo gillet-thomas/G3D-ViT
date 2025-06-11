@@ -42,7 +42,7 @@ After generating a reliable ground truth class activation map using a 3D ResNet 
   - Requires using a custom ViT-LRP model provided by the authors.  
   - Model retraining is necessary, and scaling to 3D adds complexity.
 
-- **Partial LRP** [Paper](https://www.google.com/search?client=firefox-b-d&q=Analyzing+multi-head+self-attention%3A+Spe-+cialized+heads+do+the+heavy+lifting%2C+the+rest+can+be+pruned)  
+- **Partial LRP** [Paper](https://arxiv.org/abs/1905.09418)  
   - Promising approach, but the referenced paper is not specifically focused on Partial LRP.  
   - Typically requires full LRP as a prerequisite, increasing integration overhead.
 
