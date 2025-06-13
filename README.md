@@ -125,7 +125,7 @@ The target cube was positioned at multiples of its size within the grid (**_alig
 
 Two classification tasks were designed to assess how well the GradCAM could localize meaningful regions:
 - In the first task, the model was trained to classify the **position** of the target cube within the larger volume. The larger cube was filled with zeros, while the target cube is filled with ones. Each class (label) corresponded to a specific spatial location of the target cube, effectively encoding positional information.
-- In the second task, the content of the target cube was set to either -1 or 1, and the classification label was 0 or 1 accordingly. This second task removed any spatial context, focusing purely on **content**. The goal of these experiments was to verify that the GradCAM correctly highlighted the target cube in both position-sensitive and content-only scenarios.
+- In the second task, the content of the target cube was set to either -1 or 1, and the classification label was 0 or 1 accordingly. This second task removed any spatial context, focusing purely on **value**. The goal of these experiments was to verify that the GradCAM correctly highlighted the target cube in both position-sensitive and value-only scenarios.
 
 ![Mock Dataset Example](showcase/aligned/dataset_samples/DatasetGradCAM_40grid_8cube_sample_0noise_2.png)
 *Mockdataset sample with grid size of 40, target cube of size 8, noise 0. Target cube is aligned and has label 101 on the (40/8)^3 possibilities.*
