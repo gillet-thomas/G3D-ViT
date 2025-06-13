@@ -94,13 +94,13 @@ To refine the attention maps, an optional **thresholding** step is included in t
 For **averaging the weights** along the feature dimension, the following four methods are available:
 
 ```python
-weights = gradients.mean(dim=2, keepdim=True)  # Global Average Pooling (Default)
+t  # Mean Average Pooling (Default)
 weights = gradients.max(dim=2, keepdim=True)[0]  # Max Pooling
 weights = gradients.abs().mean(dim=2, keepdim=True)  # Absolute Mean Pooling
 weights = F.relu(gradients).mean(dim=2, keepdim=True)  # ReLU Activation Pooling
 ```
 
-In practice, Global Average Pooling (the default method commonly used in CNN-based GradCAM) was applied for all evaluations. However, one may experiment with the other averaging methods that could produce better results depending on the nature of the dataset being used.
+In practice, Mean Average Pooling (the default method commonly used in CNN-based GradCAM) was applied for all evaluations. However, one may experiment with the other averaging methods that could produce better results depending on the nature of the dataset being used.
 
 ## Usage
 The input data consists of **fMRI timepoints (volumes)** which are **reshaped into 90 × 90 × 90 3D volumes** before being processed by the 3D ViT.
