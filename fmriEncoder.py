@@ -56,10 +56,10 @@ class fmriEncoder(nn.Module):
         activations = self.activations
 
         # 1. Compute importance weights (global average pooling of gradients)
-        # weights = gradients.mean(dim=2, keepdim=True)
+        weights = gradients.mean(dim=2, keepdim=True)
         # weights = gradients.abs().mean(dim=2, keepdim=True)
         # weights = gradients.max(dim=2, keepdim=True)[0] 
-        weights = F.relu(gradients).mean(dim=2, keepdim=True) 
+        # weights = F.relu(gradients).mean(dim=2, keepdim=True) 
 
         # 2. Weight activations by importance and sum all features
         cam = (weights * activations).sum(dim=2)  # [1, vit_tokens, dim] -> [1, vit_tokens]
