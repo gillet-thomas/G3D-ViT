@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from vit_pytorch.vit_3d import ViT
 
 
