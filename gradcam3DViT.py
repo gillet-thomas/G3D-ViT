@@ -34,7 +34,7 @@ def get_sample_gradcam(id, save_sample_attention=False):
     """
 
     sample = dataset[id]  # sample is tuple (input_tensor, label, coordinates)
-    input_tensor = sample[0].to(config["device"]).unsqueeze(0)
+    input_tensor = sample[0].to(config["device"]).unsqueeze(0)  # Add batch dimension
     print(f"ID: {id} - Label: {sample[1].item()}, Coordinates: {sample[2].tolist()}")
 
     cube_size = config["cube_size"]
@@ -87,9 +87,7 @@ def create_gradcam_plot(save_sample_attention=False):
         col = idx % cols
         ax = axes[col] if rows == 1 else axes[row, col]
 
-        ax.imshow(
-            -image + 1 if config["grid_noise"] < 1 else image, cmap="gray"
-        )  # INVERSE BRIGHTNESS
+        ax.imshow(-image + 1 if config["grid_noise"] < 1 else image, cmap="gray")  # INVERSE BRIGHTNESS
         heatmap = ax.imshow(attention, cmap="jet", alpha=0.4)
         fig.colorbar(heatmap, ax=ax, fraction=0.046, pad=0.04)
         ax.set_title(f"Subject {ID} (Class {class_idx.item()})")
@@ -101,7 +99,8 @@ def create_gradcam_plot(save_sample_attention=False):
         col = idx % cols
         (axes[col] if rows == 1 else axes[row, col]).axis("off")
 
-    file_name = f'DatasetGradCAM_{config["grid_size"]}grid_{config["cube_size"]}cube_{config["vit_patch_size"]}patch_{config["grid_noise"]}noise_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}'.replace(
+    time_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = f'DatasetGradCAM_{config["grid_size"]}grid_{config["cube_size"]}cube_{config["vit_patch_size"]}patch_{config["grid_noise"]}noise_results_{time_str}'.replace(
         ".", "p"
     )
     plt.tight_layout()
@@ -146,7 +145,7 @@ def save_gradcam_3d(attention_map, id, sample):
     else:
         print(f"No attention values above threshold {threshold} for sample {id}")
 
-    # Add a bounding box for the volume
+    # Set axis limits to match attention map dimensions
     ax.set(
         xlim=(0, attention_map.shape[0]),
         ylim=(0, attention_map.shape[1]),
@@ -173,17 +172,16 @@ if __name__ == "__main__":
     and save the visualizations.
     """
 
-    # Config
+    # Load configuration and suppress warnings
     warnings.simplefilter(action="ignore", category=FutureWarning)
     config = yaml.safe_load(open("./config.yaml"))
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Load Model and Dataset
     model = fmriEncoder(config).to(config["device"]).eval()
-    model.load_state_dict(
-        torch.load(config["best_model_path"], map_location=config["device"]), strict=False
-    )
+    model.load_state_dict(torch.load(config["best_model_path"], map_location=config["device"]), strict=False)
     dataset = GradCAMDataset(config, mode="val", generate_data=False)
 
+    # Define samples to process and generate Grad-CAM plots
     ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     create_gradcam_plot(save_sample_attention=config["save_gradcam_attention"])

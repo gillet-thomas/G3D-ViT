@@ -5,3 +5,6 @@ results/
 .DS_Store
 __pycache__/
 *.py[cod]
+*.toml
+.coverage
+settings.json

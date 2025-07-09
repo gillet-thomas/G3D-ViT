@@ -8,9 +8,9 @@ import torch
 from torch.utils.data import Dataset
 
 
-# GradCAM dataset class (fake data)
+# GradCAM dataset class (synthetic data)
 class GradCAMDataset(Dataset):
-    """A PyTorch Dataset for loading and optionally generating fMRI-like 3D data.
+    """A PyTorch Dataset for loading and optionally generating synthetic 3D volumetric data.
 
     This dataset is designed to create synthetic 3D volumes containing a "cube"
     of a specific value within a noisy grid, suitable for tasks like
@@ -28,7 +28,7 @@ class GradCAMDataset(Dataset):
         visualize_samples (bool): If True, visualizes a few samples upon initialization.
         batch_size (int): Batch size (from config, though not directly used in Dataset methods).
         num_samples (int): Total number of samples to generate (if `generate_data` is True).
-        data (list): A list of tuples, where each tuple contains (volume, label, coordinates).
+        data (list): A list of tuples loaded from pickle files, where each tuple contains (volume, label, coordinates).
     """
 
     def __init__(self, config, mode="train", generate_data=False):
@@ -55,9 +55,7 @@ class GradCAMDataset(Dataset):
         self.mode = mode
         self.config = config
         self.base_path = config["base_path"]
-        self.dataset_path = (
-            config["gradcam_train_path"] if mode == "train" else config["gradcam_val_path"]
-        )
+        self.dataset_path = config["gradcam_train_path"] if mode == "train" else config["gradcam_val_path"]
 
         self.grid_size = config["grid_size"]
         self.cube_size = config["cube_size"]
@@ -83,15 +81,13 @@ class GradCAMDataset(Dataset):
         print(f"Dataset initialized: {len(self.data)} {mode} samples")
 
     def generate_data(self):
-        """Generates synthetic 3D fMRI-like data with embedded cubes.
+        """Generates synthetic 3D synthetic volumes with embedded cubes.
 
-        This method creates 3D volumes, labels indicating the cube's position,
-        and the cube's coordinates. It then splits the generated data into
-        training and validation sets and saves them as pickle files.
+        This method creates 3D volumes, labels indicating the cube's position, and the cube's coordinates.
+        It then splits the generated data into training and validation sets and saves them as pickle files.
 
-        The current implementation generates "aligned" cubes whose starting
-        coordinates are multiples of `cube_size`. Commented-out code shows
-        an alternative for "not-aligned" cubes and a different classification task.
+        The current implementation generates "grid-aligned" cubes whose starting coordinates are multiples
+        of cube_size, ensuring cubes don't overlap and fit perfectly within a regular grid.
         """
 
         volumes = np.zeros((self.num_samples, self.grid_size, self.grid_size, self.grid_size))
@@ -112,10 +108,8 @@ class GradCAMDataset(Dataset):
             # tz = np.random.randint(0, self.grid_size - self.cube_size)
 
             # Classification task 1 (position)
-            volumes[i] = self.grid_noise  # Add noise for other voxels
-            volumes[
-                i, tx : tx + self.cube_size, ty : ty + self.cube_size, tz : tz + self.cube_size
-            ] = 1
+            volumes[i] = self.grid_noise  # Add background noise for non-cube voxels
+            volumes[i, tx : tx + self.cube_size, ty : ty + self.cube_size, tz : tz + self.cube_size] = 1
             labels[i] = (
                 (tx // self.cube_size)
                 + (ty // self.cube_size) * num_cubes
@@ -132,12 +126,10 @@ class GradCAMDataset(Dataset):
 
         train_size = int(0.8 * self.num_samples)
         train_samples = [
-            (v, l, c)
-            for v, l, c in zip(volumes[:train_size], labels[:train_size], coordinates[:train_size])
+            (v, l, c) for v, l, c in zip(volumes[:train_size], labels[:train_size], coordinates[:train_size])
         ]
         val_samples = [
-            (v, l, c)
-            for v, l, c in zip(volumes[train_size:], labels[train_size:], coordinates[train_size:])
+            (v, l, c) for v, l, c in zip(volumes[train_size:], labels[train_size:], coordinates[train_size:])
         ]
 
         print(f"Training volumes: {len(train_samples)}")
@@ -158,7 +150,7 @@ class GradCAMDataset(Dataset):
 
         Returns:
             tuple: A tuple containing:
-                - volume (torch.Tensor): The 3D fMRI-like volume, converted to float32.
+                - volume (torch.Tensor): The 3D synthetic volume, converted to float32.
                 - label (torch.Tensor): The label for the volume, converted to int64.
                 - coordinates (torch.Tensor): The coordinates of the embedded cube, converted to float32.
         """
@@ -167,7 +159,7 @@ class GradCAMDataset(Dataset):
         return (
             torch.tensor(volume, dtype=torch.float32),
             torch.tensor(label, dtype=torch.int64),
-            torch.tensor(coordinates),
+            torch.tensor(coordinates, dtype=torch.float32),
         )
 
     def __len__(self):
@@ -184,6 +176,7 @@ class GradCAMDataset(Dataset):
 
         This method creates a 3D scatter plot of the embedded cube within the volume
         and saves it as a PNG image. It also saves the volume as a NIfTI file.
+        The method handles tensor-to-numpy conversion and removes extra dimensions if present.
 
         Args:
             idx (int): The index of the sample to visualize.
@@ -193,6 +186,7 @@ class GradCAMDataset(Dataset):
         os.makedirs(self.config["output_dir"], exist_ok=True)
 
         # Get the data
+
         volume, label, coordinates = self.data[idx]
 
         # If data is torch tensor, convert to numpy
@@ -215,21 +209,18 @@ class GradCAMDataset(Dataset):
         )  # scatter plot for all points with value 1 (the cube)
 
         # Add a bounding box for the volume
-        ax.set(
-            xlim=(0, volume.shape[0]), ylim=(0, volume.shape[1]), zlim=(0, volume.shape[2])
-        )  # Grid size
+        ax.set(xlim=(0, volume.shape[0]), ylim=(0, volume.shape[1]), zlim=(0, volume.shape[2]))  # Grid size
         ax.set(xlabel="X axis", ylabel="Y axis", zlabel="Z axis")
 
         # Save figure and nifti file
+
         file_name = f"DatasetGradCAM_{self.grid_size}grid_{self.cube_size}cube_{self.grid_noise}noise_{idx}".replace(
             ".", "p"
         )
         plt.title(f"3D Visualization of Target Cube (Label: {label}, coordinates: {coordinates})")
         plt.tight_layout()
 
-        nib.save(
-            nib.Nifti1Image(volume, np.eye(4)), os.path.join(self.config["output_dir"], file_name)
-        )
+        nib.save(nib.Nifti1Image(volume, np.eye(4)), os.path.join(self.config["output_dir"], file_name))
         plt.savefig(os.path.join(self.config["output_dir"], f"{file_name}.png"), dpi=300)
         plt.close()
         print(f"3D visualization saved to {os.path.join(self.config['output_dir'], file_name)}")
