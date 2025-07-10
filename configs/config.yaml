@@ -1,9 +1,9 @@
 # Data paths
 base_path: './'
-output_dir: './results'
-gradcam_train_path: './data/gradcam_train.pkl'
-gradcam_val_path: './data/gradcam_val.pkl'
-best_model_path: 'model_vit_40grid_8cube_patch5.pth'
+output_dir: './'
+gradcam_train_path: './src/data/gradcam_train.pkl'
+gradcam_val_path: './src/data/gradcam_val.pkl'
+best_model_path: './configs/model_vit_40grid_8cube_patch5.pth'
 
 seed: 42
 epochs: 20
@@ -14,7 +14,7 @@ weight_decay: 0.01      # Default on AdamW is 0.01
 dropout: 0.1
 
 #Dataset GradCAM
-generate_dataset: True       # Re-generate dataset and save to pickle
+generate_dataset: False       # Re-generate dataset and save to pickle
 visualize_samples: False       # Visualize 5 samples from dataset
 save_gradcam_attention: False  # Save 3D attention maps to nifti and png 
 num_samples: 4000             # Number of samples to generate  
@@ -23,4 +23,3 @@ grid_size: 40                 # Size of the grid
 cube_size: 8                  # Size of the target cube
 vit_patch_size: 5             # Patch size for 3D ViT
 threshold: 5                  # Threshold for attention map
-

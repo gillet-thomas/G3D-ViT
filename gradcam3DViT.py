@@ -8,8 +8,8 @@ import numpy as np
 import torch
 import yaml
 
-from data.DatasetGradCAM import GradCAMDataset
-from fmriEncoder import fmriEncoder
+from src.data.DatasetGradCAM import GradCAMDataset
+from src.models.fmriEncoder import fmriEncoder
 
 
 def get_sample_gradcam(id, save_sample_attention=False):
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
     # Load configuration and suppress warnings
     warnings.simplefilter(action="ignore", category=FutureWarning)
-    config = yaml.safe_load(open("./config.yaml"))
+    config = yaml.safe_load(open("./configs/config.yaml"))
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Load Model and Dataset
