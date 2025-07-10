@@ -4,6 +4,14 @@
 
 G3D-ViT is a **3D GradCAM implementation for Vision Transformers (ViTs)**, designed to visualize important regions in 3D data by leveraging gradient-based activation maps. This method is particularly useful for understanding model decisions in **fMRI-based classification tasks**.
 
+## Getting Started
+
+To run the code, please use the following command:
+
+```bash
+python gradcam3DViT.py 
+```
+
 ## Origin
 
 This project originated during the development of **[fMRI2Vec](https://github.com/gillet-thomas/fMRI2vec)**. After implementing a 3D Vision Transformer to encode fMRI timepoints (volumes) and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
@@ -253,4 +261,7 @@ These findings confirm that G3D-ViT provides meaningful and interpretable visual
 
 ### Limitations
 G3D-ViT has shown promising results on synthetic data as well as on the resting-state fMRI samples tested so far. However, **further evaluation** on a broader variety of fMRI, rsfMRI, and MRI datasets is **necessary** to ensure the 3D GradCAM performs reliably across diverse and complex real-world scenarios. 
+
+
+
 
