@@ -180,7 +180,7 @@ if __name__ == "__main__":
     # Load Model and Dataset
     model = fmriEncoder(config).to(config["device"]).eval()
     model.load_state_dict(torch.load(config["best_model_path"], map_location=config["device"]), strict=False)
-    dataset = GradCAMDataset(config, mode="val", generate_data=False)
+    dataset = GradCAMDataset(config, mode="val", generate_data=config["generate_dataset"])
 
     # Define samples to process and generate Grad-CAM plots
     ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
