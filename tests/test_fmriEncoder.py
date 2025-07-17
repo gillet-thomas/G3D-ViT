@@ -1,7 +1,8 @@
-import src.models.fmriEncoder as fmriEncoder
 import numpy as np
 import pytest
 import torch
+
+import src.models.fmriEncoder as fmriEncoder
 
 
 @pytest.fixture
@@ -11,7 +12,7 @@ def config():
         "cube_size": 8,
         "grid_noise": 0.0,
         "batch_size": 4,
-        "device": "cuda",
+        "device": "cpu",
         "dropout": 0.1,
         "vit_patch_size": 5,
         "threshold": 5,
@@ -23,6 +24,7 @@ def test_forward_pass(config):
     x = torch.randn(1, config["grid_size"], config["grid_size"], config["grid_size"])
 
     encoder = fmriEncoder.fmriEncoder(config).eval()
+    encoder.to(torch.device(config["device"]))
     with torch.no_grad():
         output = encoder(x)
 
