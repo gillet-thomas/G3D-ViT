@@ -1,0 +1,8 @@
+matplotlib==3.10.3
+nibabel==5.3.2
+numpy==2.3.1
+pytest==8.4.1
+pytest-mock==3.14.1
+PyYAML==6.0.2
+torch==2.6.0
+vit_pytorch==1.10.1
