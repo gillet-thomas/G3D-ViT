@@ -13,7 +13,7 @@ from src.models.fmriEncoder import fmriEncoder
 
 
 def get_sample_gradcam(id, save_sample_attention=False):
-    """Retrieves a sample, computes its Grad-CAM attention map, and optionally saves it.
+    """Retrieves a dsample, computes its Grad-CAM attention map, and optionally saves it.
 
     This function fetches a specific sample from the dataset, passes it through
     the `fmriEncoder` to obtain the attention map, and can save the 3D attention
