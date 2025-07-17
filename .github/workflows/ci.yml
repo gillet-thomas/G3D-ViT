@@ -19,7 +19,7 @@ jobs:
         pip install black isort pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Format code with black
-      run: black . --line-length = 119
+      run: black . --line-length 119
     - name: Sort imports PEP8 guidelines with isort
       run: isort . 
     - name: Test with pytest
