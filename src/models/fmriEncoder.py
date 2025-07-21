@@ -7,7 +7,6 @@ import torch
 import torch.nn.functional as F
 
 
-
 class fmriEncoder(nn.Module):
     """A PyTorch module for encoding fMRI data and generating attention maps.
 
@@ -250,7 +249,9 @@ class ViT3DEncoder(nn.Module):
         self.grid_size = config["grid_size"]
         self.cube_size = config["cube_size"]
         self.patch_size = config["vit_patch_size"]
-        self.num_cubes = (self.grid_size // self.cube_size) ** 3  # num_cubes is number of possible positions of the cube in the grid
+        self.num_cubes = (
+            self.grid_size // self.cube_size
+        ) ** 3  # num_cubes is number of possible positions of the cube in the grid
 
         self.vit3d = ViT(
             channels=1,
