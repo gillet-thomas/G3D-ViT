@@ -1,8 +1,11 @@
 import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from vit_pytorch.vit_3d import ViT
+
+
+import torch
+import torch.nn.functional as F
+
 
 
 class fmriEncoder(nn.Module):
@@ -247,9 +250,7 @@ class ViT3DEncoder(nn.Module):
         self.grid_size = config["grid_size"]
         self.cube_size = config["cube_size"]
         self.patch_size = config["vit_patch_size"]
-        self.num_cubes = (
-            self.grid_size // self.cube_size
-        ) ** 3  # num_cubes is number of possible positions of the cube in the grid
+        self.num_cubes = (self.grid_size // self.cube_size) ** 3  # num_cubes is number of possible positions of the cube in the grid
 
         self.vit3d = ViT(
             channels=1,
