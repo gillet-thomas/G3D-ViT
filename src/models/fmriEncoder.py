@@ -1,10 +1,8 @@
 import numpy as np
-import torch.nn as nn
-from vit_pytorch.vit_3d import ViT
-
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
-
+from vit_pytorch.vit_3d import ViT
 
 
 class fmriEncoder(nn.Module):
@@ -189,7 +187,9 @@ class fmriEncoder(nn.Module):
             return
 
         # Process original volume
-        original = (original_volume.squeeze())  # original = original_volume.squeeze().permute(2, 0, 1) # for fMRIs rehsape [H, W, D] to [D, H, W]
+        original = (
+            original_volume.squeeze()
+        )  # original = original_volume.squeeze().permute(2, 0, 1) # for fMRIs rehsape [H, W, D] to [D, H, W]
         original = original.detach().cpu().numpy()
 
         # Verify shapes
@@ -247,7 +247,9 @@ class ViT3DEncoder(nn.Module):
         self.grid_size = config["grid_size"]
         self.cube_size = config["cube_size"]
         self.patch_size = config["vit_patch_size"]
-        self.num_cubes = (self.grid_size // self.cube_size) ** 3  # num_cubes is number of possible positions of the cube in the grid
+        self.num_cubes = (
+            self.grid_size // self.cube_size
+        ) ** 3  # num_cubes is number of possible positions of the cube in the grid
 
         self.vit3d = ViT(
             channels=1,
