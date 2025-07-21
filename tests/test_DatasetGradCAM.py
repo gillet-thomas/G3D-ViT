@@ -1,7 +1,8 @@
-import src.data.DatasetGradCAM as DatasetGradCAM
 import numpy as np
 import pytest
 import torch
+
+import src.data.DatasetGradCAM as DatasetGradCAM
 
 
 @pytest.fixture
@@ -49,17 +50,13 @@ def test_generate_data(mocker, config):
         assert volume.shape == (32, 32, 32)
         assert isinstance(label, (int, np.integer))
         assert coordinates.shape == (3,)
-        assert (
-            0 <= label < (32 // 8) ** 3
-        )  # Valid label range for position classification
+        assert 0 <= label < (32 // 8) ** 3  # Valid label range for position classification
 
     for volume, label, coordinates in val_data[:5]:  # Check first 5 samples
         assert volume.shape == (32, 32, 32)
         assert isinstance(label, (int, np.integer))
         assert coordinates.shape == (3,)
-        assert (
-            0 <= label < (32 // 8) ** 3
-        )  # Valid label range for position classification
+        assert 0 <= label < (32 // 8) ** 3  # Valid label range for position classification
 
 
 def test_getitem(mock_dataset):
@@ -78,7 +75,5 @@ def test_getitem(mock_dataset):
     assert label.shape == torch.Size([])  # Scalar label
 
     assert isinstance(coordinates, torch.Tensor)
-    assert (
-        coordinates.dtype == torch.float32
-    )  # Check original type, as it's not converted to int64
+    assert coordinates.dtype == torch.float32  # Check original type, as it's not converted to int64
     assert coordinates.shape == (3,)
