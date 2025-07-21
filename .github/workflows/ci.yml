@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
 
+    name: Python application default CI
     runs-on: ubuntu-latest
 
     steps:
