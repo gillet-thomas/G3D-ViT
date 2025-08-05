@@ -5,4 +5,5 @@ pytest==8.4.1
 pytest-mock==3.14.1
 PyYAML==6.0.2
 torch==2.6.0
+torchvision==0.21.0
 vit_pytorch==1.10.1

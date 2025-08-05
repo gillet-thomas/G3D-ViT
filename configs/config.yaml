@@ -14,10 +14,10 @@ weight_decay: 0.01      # Default on AdamW is 0.01
 dropout: 0.1
 
 #Dataset GradCAM
-generate_dataset: False       # Re-generate dataset and save to pickle
+generate_dataset: True       # Re-generate dataset and save to pickle
 visualize_samples: False       # Visualize 5 samples from dataset
-save_gradcam_attention: False  # Save 3D attention maps to nifti and png 
-num_samples: 4000             # Number of samples to generate  
+save_gradcam_attention: False  # Save 3D attention maps to nifti and png
+num_samples: 4000             # Number of samples to generate
 grid_noise: 0                 # Noise added to all other voxels
 grid_size: 40                 # Size of the grid
 cube_size: 8                  # Size of the target cube
