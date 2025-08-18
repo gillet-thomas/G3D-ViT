@@ -94,7 +94,7 @@ This finding aligns with recommendations from [jacobgil's guide on GradCAM for V
    - This results in a **single importance score** (**weight**) per spatial location (ViT patch).
 
 3. **Activation Scaling**
-   - Weight each path's activations by multiplying them with its **weight**.
+   - Weight each patch's activations by multiplying them with its **weight**.
    - Sum across patch activation dimension to obtain a **single attention score per patch**.
 
 4. **Create final 3D GradCAM**
@@ -202,7 +202,7 @@ Another finding was that GradCAM performs better when the **patches are smaller*
   </tr>
 </table>
 
-_Side-by-side comparison of GradCAM results with a patch size of 8 and a target cube size of 5 (left), versus a patch size of 5 and a target cube size of 8 (right), using the same grid size, aligned cubes, and no background noise._
+_Side-by-side comparison of GradCAM results with a patch size of 5 and a target cube size of 8 (left), versus a patch size of 8 and a target cube size of 5 (right), using the same grid size, aligned cubes, and no background noise._
 
 The addition of **background noise** did not affect the results, as the GradCAM consistently maintained the same level of precision in highlighting the target region.
 
