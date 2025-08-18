@@ -94,7 +94,7 @@ This finding aligns with recommendations from [jacobgil's guide on GradCAM for V
    - This results in a **single importance score** (**weight**) per spatial location (ViT patch).
 
 3. **Activation Scaling**
-   - Weight each path's activatoins by multiplying them with its **weight**.
+   - Weight each path's activations by multiplying them with its **weight**.
    - Sum across patch activation dimension to obtain a **single attention score per patch**.
 
 4. **Create final 3D GradCAM**
