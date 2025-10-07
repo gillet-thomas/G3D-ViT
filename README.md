@@ -15,9 +15,10 @@ G3D-ViT is a **3D GradCAM implementation for Vision Transformers (ViTs)**, desig
 To run the code, please use the following command:
 
 ```bash
-python gradcam3DViT.py 
+python gradcam3DViT.py
 ```
 
+To execute all test cases in the repository, simply run `pytest`
 ## Origin
 
 This project originated during the development of **[fMRI2Vec](https://github.com/gillet-thomas/fMRI2vec)**. After implementing a 3D Vision Transformer to encode fMRI timepoints (volumes) and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
@@ -30,7 +31,7 @@ To evaluate the correctness of the tested approaches, two main criteria were use
 
 ### Evaluation of CNN Interpretability Methods
 
-Here are all the CNN interpretability methods* that were evaluated:  
+Here are all the CNN interpretability methods* that were evaluated:
 
 - **pytorch-grad-cam GradCAM**: Not consistent across subjects; highlighted regions often outside the brain.
 - **pytorch-grad-cam LayerCAM**: Consistent results, effective for both age and gender.
@@ -47,29 +48,29 @@ Here are all the CNN interpretability methods* that were evaluated:
 
 ### Evaluation of Vision Transformer (ViT) Interpretability Methods
 
-After generating a reliable ground truth class activation map using a 3D ResNet model, I evaluated several interpretability methods tailored for Vision Transformers. The goal was to assess how well these methods could replicate the attention patterns from the 3D ResNet model. Here is a summary of the tested ViT explainability methods* and their results:  
+After generating a reliable ground truth class activation map using a 3D ResNet model, I evaluated several interpretability methods tailored for Vision Transformers. The goal was to assess how well these methods could replicate the attention patterns from the 3D ResNet model. Here is a summary of the tested ViT explainability methods* and their results:
 
 - **GradCAM** [GitHub](https://jacobgil.github.io/pytorch-gradcam-book/vision_transformers.html)
   - Designed for 2D data by default, and could not adapt it succesfully for 3D.
 
-- **Beyond Attention** [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Chefer_Transformer_Interpretability_Beyond_Attention_Visualization_CVPR_2021_paper.pdf) [GitHub](https://github.com/hila-chefer/Transformer-Explainability/tree/main)  
-  - Requires using a custom ViT-LRP model provided by the authors.  
+- **Beyond Attention** [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Chefer_Transformer_Interpretability_Beyond_Attention_Visualization_CVPR_2021_paper.pdf) [GitHub](https://github.com/hila-chefer/Transformer-Explainability/tree/main)
+  - Requires using a custom ViT-LRP model provided by the authors.
   - Model retraining is necessary, and scaling to 3D adds complexity.
 
-- **Partial LRP** [Paper](https://arxiv.org/abs/1905.09418)  
-  - Promising approach, but the referenced paper is not specifically focused on Partial LRP.  
+- **Partial LRP** [Paper](https://arxiv.org/abs/1905.09418)
+  - Promising approach, but the referenced paper is not specifically focused on Partial LRP.
   - Typically requires full LRP as a prerequisite, increasing integration overhead.
 
-- **Rollout** [GitHub](https://github.com/jacobgil/vit-explain)  
+- **Rollout** [GitHub](https://github.com/jacobgil/vit-explain)
   - Code is not functional out of the box, there is a problem with the `attentions` parameter in the `rollout` function, even in the official GitHub repository version.
 
-- **LeGrad** [GitHub](https://github.com/WalBouss/LeGrad)  
-  - Depends on OpenCLIP and supports only a fixed set of pretrained models.  
+- **LeGrad** [GitHub](https://github.com/WalBouss/LeGrad)
+  - Depends on OpenCLIP and supports only a fixed set of pretrained models.
   - Incompatible with custom ViT architectures.
 
-- **Transformers-Interpret** [GitHub](https://github.com/cdpierse/transformers-interpret?tab=readme-ov-file)  
+- **Transformers-Interpret** [GitHub](https://github.com/cdpierse/transformers-interpret?tab=readme-ov-file)
   - Built for Hugging Face's transformer models; does not support custom ViTs or 3D data.
-  
+
 None of the tested methods for 3D ViT enabled the reproduction of the ground truth activation map generetad on the 3D ResNet, motivating the development of a custom solution.
 
 \*_methods tested on a trained 3D ViT achieving 100% accuracy on training and 90%+ on validation for age and gender classification)_
@@ -81,9 +82,9 @@ G3D-ViT works on a trained 3D ViT for classification. It registers **hooks** to 
 
 The 3D Vision Transformer model used in this project is a direct implementation of the [3D ViT by lucidrains](https://github.com/lucidrains/vit-pytorch?tab=readme-ov-file#3d-vit), which was used without modification to encode and classify the fMRI volumes.
 
-1. **Hook Registration and Calling**  
-Both hooks are registered on the **last normalization layer** of the ViT (`vit3d.transformer.layers[-1][0].norm`).  
-This specific layer was chosen because it consistently produced the most interpretable results compared to other layers.  
+1. **Hook Registration and Calling**
+Both hooks are registered on the **last normalization layer** of the ViT (`vit3d.transformer.layers[-1][0].norm`).
+This specific layer was chosen because it consistently produced the most interpretable results compared to other layers.
 This finding aligns with recommendations from [jacobgil's guide on GradCAM for Vision Transformers](https://jacobgil.github.io/pytorch-gradcam-book).
 
 - **Forward hook** captures the output of the last normalization layer, revealing *where* the model detected patterns (**activations**). This forward hook is called during the forward pass triggered by the classification of the input sample.
@@ -234,7 +235,7 @@ In the **second classification task (value-based)**, the GradCAM also performed 
 
 _Side-by-side comparison of GradCAM results for value-based classification using aligned cubes. Left: patch size 5, target cube size 7, grid size 35. Right: patch size 5, target cube size 8, grid size 40. No background noise was added in either case._
 
-## Results on real-world data 
+## Results on real-world data
 After validation on the mock dataset, G3D-ViT was applied to **real-world fMRI data** (specifically resting-state fMRI samples). The classifier used was the same 3D Vision Transformer trained to perform age group classification (young vs old participants).
 
 The ViT achieved 100% training accuracy, confirming its ability to separate the two age groups based on the input volumes. G3D-ViT was then used to generate attention maps, with the goal of identifying which brain regions the model relied on for this classification. These GradCAM visualizations provide valuable insight into the model's decision-making process and enhance the interpretability of its predictions.
@@ -266,8 +267,4 @@ The method was validated on a mock dataset, demonstrating robust and consistent 
 These findings confirm that G3D-ViT provides meaningful and interpretable visualizations in 3D scenarios.
 
 ### Limitations
-G3D-ViT has shown promising results on synthetic data as well as on the resting-state fMRI samples tested so far. However, **further evaluation** on a broader variety of fMRI, rsfMRI, and MRI datasets is **necessary** to ensure the 3D GradCAM performs reliably across diverse and complex real-world scenarios. 
-
-
-
-
+G3D-ViT has shown promising results on synthetic data as well as on the resting-state fMRI samples tested so far. However, **further evaluation** on a broader variety of fMRI, rsfMRI, and MRI datasets is **necessary** to ensure the 3D GradCAM performs reliably across diverse and complex real-world scenarios.

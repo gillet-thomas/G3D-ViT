@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from vit_pytorch.vit_3d import ViT
 
 
-class fmriEncoder(nn.Module):
+class NeuroEncoder(nn.Module):
     """A PyTorch module for encoding fMRI data and generating attention maps.
 
     This class leverages a `ViT3DEncoder` internally and implements hooks to
@@ -23,7 +23,7 @@ class fmriEncoder(nn.Module):
     """
 
     def __init__(self, config):
-        """Initializes the fmriEncoder model.
+        """Initializes the NeuroEncoder model.
 
         Args:
             config (dict): A dictionary containing configuration parameters for the model.
@@ -70,7 +70,7 @@ class fmriEncoder(nn.Module):
         self.backward_handle = last_attention.register_backward_hook(backward_hook)
 
     def forward(self, x):
-        """Defines the forward pass of the fmriEncoder.
+        """Defines the forward pass of the NeuroEncoder.
 
         Encodes each fMRI volume using the internal 3D Vision Transformer.
 

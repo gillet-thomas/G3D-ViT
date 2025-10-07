@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import torch
 
-import src.models.fmriEncoder as fmriEncoder
+import src.models.NeuroEncoder as NeuroEncoder
 
 
 @pytest.fixture
@@ -23,7 +23,7 @@ def config():
 def test_forward_pass(config):
     x = torch.randn(1, config["grid_size"], config["grid_size"], config["grid_size"])
 
-    encoder = fmriEncoder.fmriEncoder(config).eval()
+    encoder = NeuroEncoder.NeuroEncoder(config).eval()
     encoder.to(torch.device(config["device"]))
     with torch.no_grad():
         output = encoder(x)

@@ -9,14 +9,14 @@ import torch
 import yaml
 
 from src.data.DatasetGradCAM import GradCAMDataset
-from src.models.fmriEncoder import fmriEncoder
+from src.models.NeuroEncoder import NeuroEncoder
 
 
 def get_sample_gradcam(id, save_sample_attention=False):
     """Retrieves a sample, computes its Grad-CAM attention map, and optionally saves it.
 
     This function fetches a specific sample from the dataset, passes it through
-    the `fmriEncoder` to obtain the attention map, and can save the 3D attention
+    the `NeuroEncoder` to obtain the attention map, and can save the 3D attention
     map as a NIfTI file and a 3D scatter plot.
 
     Args:
@@ -167,7 +167,7 @@ def save_gradcam_3d(attention_map, id, sample):
 if __name__ == "__main__":
     """Main execution block for loading the model, dataset, and generating Grad-CAM plots.
 
-    This block initializes the configuration, loads the pre-trained `fmriEncoder` model,
+    This block initializes the configuration, loads the pre-trained `NeuroEncoder` model,
     sets up the `GradCAMDataset`, and then calls `create_gradcam_plot` to generate
     and save the visualizations.
     """
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     config["device"] = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Load Model and Dataset
-    model = fmriEncoder(config).to(config["device"]).eval()
+    model = NeuroEncoder(config).to(config["device"]).eval()
     model.load_state_dict(torch.load(config["best_model_path"], map_location=config["device"]), strict=False)
     dataset = GradCAMDataset(config, mode="val", generate_data=config["generate_dataset"])
 
