@@ -21,7 +21,7 @@ python gradcam3DViT.py
 To execute all test cases in the repository, simply run `pytest`
 ## Origin
 
-This project originated during the development of **[fMRI2Vec](https://github.com/gillet-thomas/fMRI2vec)**. After implementing a 3D Vision Transformer to encode fMRI timepoints (volumes) and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
+This project originated during the development of **[NeuroViT](https://github.com/gillet-thomas/NeuroViT)**. After implementing a 3D Vision Transformer to encode fMRI timepoints (volumes) and classify them, a need emerged for an interpretability method that could highlight **regions of interest (ROIs)** the ViT focused on during classification. G3D-ViT was developed to fill that gap and provide insights into **which brain regions the model "looked at"** when predicting outcomes such as **gender or age** on the fMRI timepoints.
 
 ## State of the Art - Class Activation Maps
 
